@@ -909,7 +909,12 @@ void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<Poi
             (angle_flag_ && (arg_horiz < start_angle_ || arg_horiz > end_angle_)) ||
             (!angle_flag_ && (arg_horiz > end_angle_ && arg_horiz < start_angle_)))  // invalid distance
         {
-          continue;
+          point.x = NAN;
+          point.y = NAN;
+          point.z = NAN;
+          point.intensity = 0;
+          point.ring = dsr;
+          pointcloud->at(2 * this->block_num + firing, dsr) = point;
         }
         else
         {
@@ -922,7 +927,7 @@ void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<Poi
           point.z = distance2 * this->sin_lookup_table_[arg_vert] + Rz_;
           point.intensity = intensity;
           point.ring = dsr;
-          pointcloud->push_back(point);
+           pointcloud->at(2 * this->block_num + firing, dsr) = point;
         }
       }
     }
@@ -1026,7 +1031,12 @@ void RawData::unpack_RS32(const rslidar_msgs::rslidarPacket& pkt, pcl::PointClou
             (angle_flag_ && (arg_horiz < start_angle_ || arg_horiz > end_angle_)) ||
             (!angle_flag_ && (arg_horiz > end_angle_ && arg_horiz < start_angle_)))  // invalid distance
         {
-          continue;
+          point.x = NAN;
+          point.y = NAN;
+          point.z = NAN;
+          point.intensity = 0;
+          point.ring =dsr;
+          pointcloud->at(this->block_num, dsr) = point;
         }
         else
         {
@@ -1038,7 +1048,7 @@ void RawData::unpack_RS32(const rslidar_msgs::rslidarPacket& pkt, pcl::PointClou
           point.z = distance2 * this->sin_lookup_table_[arg_vert] + Rz_;
           point.intensity = intensity;
           point.ring = dsr;
-          pointcloud->push_back(point);
+          pointcloud->at(this->block_num, dsr) = point;
         }
       }
     }
@@ -1102,7 +1112,12 @@ void RawData::unpack_RS32(const rslidar_msgs::rslidarPacket& pkt, pcl::PointClou
             (angle_flag_ && (arg_horiz < start_angle_ || arg_horiz > end_angle_)) ||
             (!angle_flag_ && (arg_horiz > end_angle_ && arg_horiz < start_angle_)))  // invalid distance
         {
-          continue;
+          point.x = NAN;
+          point.y = NAN;
+          point.z = NAN;
+          point.intensity = 0;
+          point.ring = dsr;
+          pointcloud->at(this->block_num, dsr) = point;
         }
         else
         {
@@ -1114,7 +1129,7 @@ void RawData::unpack_RS32(const rslidar_msgs::rslidarPacket& pkt, pcl::PointClou
           point.z = distance2 * this->sin_lookup_table_[arg_vert] + Rz_;
           point.intensity = intensity;
           point.ring = dsr;
-          pointcloud->push_back(point);
+          pointcloud->at(this->block_num, dsr) = point;
         }
       }
     }

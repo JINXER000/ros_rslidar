@@ -61,14 +61,14 @@ void Convert::processScan(const rslidar_msgs::rslidarScan::ConstPtr& scanMsg)
     out_points_->height = 16;
     out_points_->width = 24 * (int)scanMsg->packets.size();
     out_points_->is_dense = false;
-    out_points_->reserve(out_points_->height * out_points_->width);
+    out_points_->resize(out_points_->height * out_points_->width);
   }
   else if (model == "RS32")
   {
     out_points_->height = 32;
     out_points_->width = 12 * (int)scanMsg->packets.size();
     out_points_->is_dense = false;
-    out_points_->reserve(out_points_->height * out_points_->width);
+    out_points_->resize(out_points_->height * out_points_->width);
   }
 
   // process each packet provided by the driver
