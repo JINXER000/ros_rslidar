@@ -1,6 +1,6 @@
 <launch>
   <arg name="model" default="RS16" />
-  <arg name="device_ip" default="192.168.1.200" />
+  <arg name="device_ip" default="10.7.5.103" />
   <arg name="msop_port" default="6699" />
   <arg name="difop_port" default="7788" />
   <arg name="cut_angle" default="0" doc="If set at [0, 360), cut at specific angle feature activated, otherwise use the fixed packets number mode."/>
