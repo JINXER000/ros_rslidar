@@ -30,6 +30,7 @@ Convert::Convert(ros::NodeHandle node, ros::NodeHandle private_nh) : data_(new r
   std::string output_points_topic;
   private_nh.param("output_points_topic", output_points_topic, std::string("rslidar_points"));
   output_ = node.advertise<sensor_msgs::PointCloud2>(output_points_topic, 10);
+  output_planning_ = node.advertise<sensor_msgs::PointCloud2>(output_points_topic+"_planning", 10);
 
   srv_ = boost::make_shared<dynamic_reconfigure::Server<rslidar_pointcloud::CloudNodeConfig> >(private_nh);
   dynamic_reconfigure::Server<rslidar_pointcloud::CloudNodeConfig>::CallbackType f;
@@ -42,6 +43,7 @@ Convert::Convert(ros::NodeHandle node, ros::NodeHandle private_nh) : data_(new r
   rslidar_scan_ = node.subscribe(input_packets_topic, 10, &Convert::processScan, (Convert*)this,
                                  ros::TransportHints().tcpNoDelay(true));
   out_points_.reset(new pcl::PointCloud<rslidar_rawdata::PointXYZIR>);
+  out_points_planning_.reset(new pcl::PointCloud<rslidar_rawdata::PointXYZIR>);
 }
 
 void Convert::callback(rslidar_pointcloud::CloudNodeConfig& config, uint32_t level)
@@ -71,16 +73,26 @@ void Convert::processScan(const rslidar_msgs::rslidarScan::ConstPtr& scanMsg)
     out_points_->resize(out_points_->height * out_points_->width);
   }
 
+  out_points_planning_->header = out_points_->header;
+  out_points_planning_->clear();
+  out_points_planning_->height = out_points_->height;
+  out_points_planning_->width = out_points_->width;
+  out_points_planning_->is_dense = out_points_->is_dense;
+  out_points_planning_->resize(out_points_planning_->height * out_points_planning_->width);
   // process each packet provided by the driver
 
   data_->block_num = 0;
   for (size_t i = 0; i < scanMsg->packets.size(); ++i)
   {
-    data_->unpack(scanMsg->packets[i], out_points_);
+    data_->unpack(scanMsg->packets[i], out_points_, out_points_planning_);
   }
 
   pcl::toROSMsg(*out_points_, out_msg_);
 
   output_.publish(out_msg_);
+
+  pcl::toROSMsg(*out_points_planning_, out_msg_planning_);
+
+  output_planning_.publish(out_msg_planning_);
 }
 }  // namespace rslidar_pointcloud

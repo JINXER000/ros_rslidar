@@ -44,9 +44,13 @@ private:
   boost::shared_ptr<rslidar_rawdata::RawData> data_;
   ros::Subscriber rslidar_scan_;
   ros::Publisher output_;
+  ros::Publisher output_planning_;
 
   pcl::PointCloud<rslidar_rawdata::PointXYZIR>::Ptr out_points_;
   sensor_msgs::PointCloud2 out_msg_;
+
+  pcl::PointCloud<rslidar_rawdata::PointXYZIR>::Ptr out_points_planning_;
+  sensor_msgs::PointCloud2 out_msg_planning_;
 };
 
 }  // namespace rslidar_pointcloud

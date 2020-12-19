@@ -146,7 +146,7 @@ public:
   void loadConfigFile(ros::NodeHandle node, ros::NodeHandle private_nh);
 
   /*unpack the RS16 UDP packet and opuput PCL PointXYZI type*/
-  void unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<PointXYZIR>::Ptr pointcloud);
+  void unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<PointXYZIR>::Ptr pointcloud, pcl::PointCloud<PointXYZIR>::Ptr pc_planning);
 
   /*unpack the RS32 UDP packet and opuput PCL PointXYZI type*/
   void unpack_RS32(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<PointXYZIR>::Ptr pointcloud);

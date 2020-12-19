@@ -806,7 +806,7 @@ int RawData::estimateTemperature(float Temper)
  *  @param pkt raw packet to unpack
  *  @param pc shared pointer to point cloud (points are appended)
  */
-void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<PointXYZIR>::Ptr pointcloud)
+void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<PointXYZIR>::Ptr pointcloud, pcl::PointCloud<PointXYZIR>::Ptr pc_planning)
 {
   // check pkt header
   if (pkt.data[0] != 0x55 || pkt.data[1] != 0xAA || pkt.data[2] != 0x05 || pkt.data[3] != 0x0A)
@@ -915,6 +915,27 @@ void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<Poi
           point.intensity = 0;
           point.ring = dsr;
           pointcloud->at(2 * this->block_num + firing, dsr) = point;
+
+          // Differentiate the too close and too far cases
+          // Save the azimuth angle in the intensity value
+          if (distance2 > max_distance_)
+          {
+            // Too far
+            point.x = INFINITY;
+            point.y = INFINITY;
+            point.z = INFINITY;
+          }
+          else if (distance2 < min_distance_)
+          {
+            // Too close
+            point.x = NAN;
+            point.y = NAN;
+            point.z = NAN;
+          }
+          // Save the azimuth angle in the intensity value
+          point.intensity = RS_TO_RADS(arg_horiz / 100.0f);
+          point.ring = dsr;
+          pc_planning->at(2 * this->block_num + firing, dsr) = point;
         }
         else
         {
@@ -927,7 +948,8 @@ void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<Poi
           point.z = distance2 * this->sin_lookup_table_[arg_vert] + Rz_;
           point.intensity = intensity;
           point.ring = dsr;
-           pointcloud->at(2 * this->block_num + firing, dsr) = point;
+          pointcloud->at(2 * this->block_num + firing, dsr) = point;
+          pc_planning->at(2 * this->block_num + firing, dsr) = point;
         }
       }
     }
