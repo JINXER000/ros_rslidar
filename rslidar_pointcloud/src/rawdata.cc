@@ -933,7 +933,7 @@ void RawData::unpack(const rslidar_msgs::rslidarPacket& pkt, pcl::PointCloud<Poi
             point.z = NAN;
           }
           // Save the azimuth angle in the intensity value
-          point.intensity = RS_TO_RADS(arg_horiz / 100.0f);
+          point.intensity = -RS_TO_RADS(arg_horiz / 100.0f);
           point.ring = dsr;
           pc_planning->at(2 * this->block_num + firing, dsr) = point;
         }
